@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MATGR Sales Platform</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div id="login-container">
+    <h1>MATGR Sales Platform</h1>
+    <p>Please log in to continue</p>
+    <p><strong>VERSION:</strong> V15-TEST</p>
+
+    <form id="login-form">
+      <input type="email" id="login-email" placeholder="Email" required />
+      <input type="password" id="login-password" placeholder="Password" required />
+      <button type="submit">Log In</button>
+      <p id="login-error"></p>
+    </form>
+  </div>
+
+  <!-- App Layout (hidden until login) -->
+  <div id="app" class="hidden">
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <h3 class="sidebar-title">MATGR</h3>
+
+      <button class="nav-btn active" data-page="dashboard-page">Dashboard</button>
+      <button class="nav-btn" id="nav-users" data-page="users-page">User Management</button>
+      <button class="nav-btn" data-page="sales-page">Sales</button>
+      <button class="nav-btn" data-page="clients-page">Clients</button>
+      <button class="nav-btn" data-page="products-page">Products</button>
+      <button class="nav-btn" data-page="branches-page">Branches</button>
+      <button class="nav-btn" id="nav-analytics" data-page="revenue-page">Revenue</button>
+      <button class="nav-btn" data-page="settings-page">Settings</button>
+
+      <div class="sidebar-footer">
+        <p id="sidebar-user"></p>
+        <p><strong>Role:</strong> <span id="sidebar-role"></span></p>
+
+        <button class="logout-btn" id="logout-btn" type="button">Log Out</button>
+        <p id="logout-msg"></p>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="content">
+
+      <!-- Dashboard -->
+      <div id="dashboard-page" class="page">
+        <h2>Dashboard</h2>
+        <p id="welcome-text"></p>
+
+        <hr />
+        <h3>Quick Stats</h3>
+        <ul>
+          <li>Clients: <span id="stat-clients">0</span></li>
+          <li>Products: <span id="stat-products">0</span></li>
+          <li>Sales: <span id="stat-sales">0</span></li>
+        </ul>
+
+        <p>This is the main overview page.</p>
+      </div>
+
+      <!-- User Management -->
+      <div id="users-page" class="page hidden">
+        <h2>User Management</h2>
+
+        <h3>Pending Accounts</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Role</th>
+              <th>Branch</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="pending-users-table"></tbody>
+        </table>
+
+        <hr />
+
+        <h3>All Users</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Branch</th>
+              <th>Approved</th>
+            </tr>
+          </thead>
+          <tbody id="all-users-table"></tbody>
+        </table>
+      </div>
+
+      <!-- Sales -->
+      <div id="sales-page" class="page hidden">
+        <h2>Sales</h2>
+
+        <h3>Add Sale</h3>
+
+        <label>Client</label>
+        <select id="sale-client"></select>
+
+        <label>Product</label>
+        <select id="sale-product"></select>
+
+        <label>Quantity</label>
+        <input type="number" id="sale-qty" placeholder="Quantity" value="1" min="1" />
+
+        <label>Payment Type</label>
+<select id="sale-payment">
+  <option value="cash">Cash</option>
+  <option value="card">Card</option>
+  <option value="transfer">Bank Transfer</option>
+</select>
+
+<label>Final Sale Price (optional)</label>
+<input type="number" id="sale-final" placeholder="Leave empty to auto-calc" min="0" />
+
+        <button type="button" id="add-sale-btn">Add Sale</button>
+        <p id="sale-error"></p>
+
+        <hr />
+
+        <h3>Sales List</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Payment</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="sales-table"></tbody>
+        </table>
+      </div>
+
+      <!-- Clients -->
+      <div id="clients-page" class="page hidden">
+        <h2>Clients</h2>
+
+        <h3>Add Client</h3>
+        <input type="text" id="client-name" placeholder="Client name" />
+        <input type="text" id="client-phone" placeholder="Phone number" />
+        <input type="text" id="client-city" placeholder="City" />
+
+        <button type="button" id="add-client-btn">Add Client</button>
+        <p id="client-error"></p>
+
+        <hr />
+
+        <h3>Client List</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>City</th>
+              <th>Purchases</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="clients-table"></tbody>
+        </table>
+      </div>
+
+      <!-- Products -->
+      <div id="products-page" class="page hidden">
+        <h2>Products</h2>
+
+        <h3>Add Product</h3>
+        <input type="text" id="product-name" placeholder="Product name" />
+        <input type="number" id="product-price" placeholder="Price" />
+        <input type="text" id="product-category" placeholder="Category" />
+
+        <button type="button" id="add-product-btn">Add Product</button>
+        <p id="product-error"></p>
+
+        <hr />
+
+        <h3>Product List</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="products-table"></tbody>
+        </table>
+      </div>
+
+      <!-- Branches -->
+      <div id="branches-page" class="page hidden">
+        <h2>Branches</h2>
+
+        <h3>Add Branch</h3>
+        <input type="text" id="branch-name" placeholder="Branch name" />
+        <input type="text" id="branch-city" placeholder="City" />
+        <button type="button" id="add-branch-btn">Add Branch</button>
+        <p id="branch-error"></p>
+
+        <hr />
+
+        <h3>Branch List</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>City</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="branches-table"></tbody>
+        </table>
+      </div>
+
+      <!-- Revenue -->
+      <div id="revenue-page" class="page hidden">
+        <h2>Revenue Analytics</h2>
+
+        <p><strong>Total Revenue:</strong> <span id="total-revenue">0</span></p>
+        <p><strong>Top Product:</strong> <span id="top-product">—</span></p>
+        <p><strong>Best Client:</strong> <span id="best-client">—</span></p>
+        <p><strong>Total Sales:</strong> <span id="total-sales">0</span></p>
+        <p><strong>Average Order Value:</strong> <span id="avg-order">0</span></p>
+
+        <hr />
+
+        <h3>Revenue by Category</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody id="category-table"></tbody>
+        </table>
+
+        <hr />
+
+        <h3>Revenue by Date</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody id="date-table"></tbody>
+        </table>
+
+        <hr />
+
+        <h3>Branch Performance Comparison</h3>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Branch</th>
+              <th>Total Revenue</th>
+              <th>Sales Count</th>
+              <th>Average Order</th>
+            </tr>
+          </thead>
+          <tbody id="branch-performance-table"></tbody>
+        </table>
+        <p id="top-branch-text"></p>
+
+        <hr />
+<h3>Employee Performance (Top Sales Reps)</h3>
+<table border="1" width="100%">
+  <thead>
+    <tr>
+      <th>Sales Rep (Email)</th>
+      <th>Total Revenue</th>
+      <th>Sales Count</th>
+    </tr>
+  </thead>
+  <tbody id="rep-performance-table"></tbody>
+</table>
+
+        <h3>Explanation</h3>
+        <p>These values are calculated from the sales records to help managers understand performance.</p>
+      </div>
+
+      <!-- Settings -->
+      <div id="settings-page" class="page hidden">
+        <h2>Settings</h2>
+
+        <h3>My Profile</h3>
+
+        <label>Full Name</label>
+        <input type="text" id="set-fullname-input" placeholder="Enter your full name" />
+        <button type="button" id="btn-save-name">Save Name</button>
+        <p id="name-msg"></p>
+
+        <p><strong>Email:</strong> <span id="set-email">—</span></p>
+        <p><strong>Role:</strong> <span id="set-role">—</span></p>
+        <p><strong>Branch:</strong> <span id="set-branch">—</span></p>
+
+        <hr />
+
+        <h3>Change Password</h3>
+        <input type="password" id="new-password" placeholder="New password" />
+        <button type="button" id="btn-change-password">Update Password</button>
+        <p id="password-msg"></p>
+
+        <hr />
+
+        <h3>Session</h3>
+        <p id="session-status">Checking session...</p>
+      </div>
+
+    </div> <!-- end #content -->
+  </div> <!-- end #app -->
+
+  <!-- Supabase must load first -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Your modules (order matters) -->
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clients.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/sales.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/branches.js"></script>
+  <script src="js/users.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MATGR - Client Inquiry Form</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <div style="max-width:520px;margin:40px auto;">
+    <h1>MATGR Golf Car Inquiry</h1>
+    <p>Fill this form and our sales team will contact you.</p>
+
+    <form id="lead-form">
+      <input type="text" id="lead-name" placeholder="Full name" required />
+      <input type="text" id="lead-phone" placeholder="Phone number" />
+      <input type="text" id="lead-city" placeholder="City" />
+      <input type="text" id="lead-interest" placeholder="Product interest (e.g., 4-seater)" />
+      <button type="submit">Submit</button>
+      <p id="lead-msg"></p>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/db.js"></script>
+  <script src="js/public-form.js"></script>
+</body>
+</html>

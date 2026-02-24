@@ -190,12 +190,19 @@ function showDashboard(email, role) {
 function applyRoleVisibility(role) {
   const analyticsNav = document.getElementById("nav-analytics");
   const usersNav = document.getElementById("nav-users");
+  const branchesNav = document.querySelector('[data-page="branches-page"]');
 
+  // Analytics visible to managers+
   const canSeeAnalytics = (role === "ceo" || role === "admin" || role === "branch_manager");
   if (analyticsNav) analyticsNav.classList.toggle("hidden", !canSeeAnalytics);
 
+  // User management only CEO/admin
   const canManageUsers = (role === "ceo" || role === "admin");
   if (usersNav) usersNav.classList.toggle("hidden", !canManageUsers);
+
+  // Branch page only CEO/admin
+  const canSeeBranches = (role === "ceo" || role === "admin");
+  if (branchesNav) branchesNav.classList.toggle("hidden", !canSeeBranches);
 }
 
 function renderAll() {

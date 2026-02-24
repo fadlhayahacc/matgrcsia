@@ -53,42 +53,64 @@ function renderSalesForm(clients, products) {
   });
 }
 
+// sales.js (inside your addSale handler)
 window.addSale = async function addSale() {
-  const clientId = document.getElementById("sale-client").value;
-  const productId = document.getElementById("sale-product").value;
+  const client_id = document.getElementById("sale-client").value;
+  const product_id = document.getElementById("sale-product").value;
   const qty = Number(document.getElementById("sale-qty").value);
-  const paymentType = document.getElementById("sale-payment").value;
-  const finalRaw = document.getElementById("sale-final").value;
   const errEl = document.getElementById("sale-error");
   if (errEl) errEl.textContent = "";
 
-  if (!clientId || !productId) return (errEl.textContent = "Select client & product.");
-  if (!Number.isFinite(qty) || qty < 1) return (errEl.textContent = "Qty must be 1+.");
+  if (!client_id || !product_id) {
+    if (errEl) errEl.textContent = "Select client + product.";
+    return;
+  }
+  if (!Number.isFinite(qty) || qty < 1) {
+    if (errEl) errEl.textContent = "Quantity must be 1 or more.";
+    return;
+  }
 
-  // product price lookup (from appState)
-  const product = window.appState?.products?.find(p => p.id === productId);
-  if (!product) return (errEl.textContent = "Product not found.");
+  // get logged-in user id
+  const { data: uData, error: uErr } = await window.sb.auth.getUser();
+  if (uErr || !uData?.user) {
+    if (errEl) errEl.textContent = "Session error. Please log in again.";
+    return;
+  }
 
-  const autoTotal = (Number(product.price) || 0) * qty;
+  const created_by = uData.user.id;
 
-  // final price optional override
-  const finalPrice = finalRaw === "" ? autoTotal : Number(finalRaw);
-  if (!Number.isFinite(finalPrice) || finalPrice < 0) return (errEl.textContent = "Final price must be valid.");
+  // branch_id must come from profile (global)
+  const branch_id = window.profile?.branch_id || null;
+  if (!branch_id) {
+    if (errEl) errEl.textContent = "No branch assigned to your account.";
+    return;
+  }
 
-  // created_by = current user
-  const user = await getSessionUser();
-  if (!user) return (errEl.textContent = "Session expired. Please log in again.");
+  // get product price from current loaded products in appState
+  const prod = (window.appState?.products || []).find(p => p.id === product_id);
+  if (!prod) {
+    if (errEl) errEl.textContent = "Product not found (refresh).";
+    return;
+  }
 
-  const payload = {
-    client_id: clientId,
-    product_id: productId,
-    qty: qty,
-    total: finalPrice,          // keep using total for analytics
-    final_price: finalPrice,    // explicit final price column
-    payment_type: paymentType,
-    branch_id: window.profile?.branch_id || null,
-    created_by: user.id
-  };
+  const total = Number(prod.price) * qty;
+
+  const { error } = await window.sb.from("sales").insert([{
+    client_id,
+    product_id,
+    qty,
+    total,
+    branch_id,
+    created_by
+  }]);
+
+  if (error) {
+    if (errEl) errEl.textContent = error.message;
+    return;
+  }
+
+  await window.refreshAndRender();
+};
 
   const res = await apiAddSale(payload);
   if (!res.ok) return (errEl.textContent = res.message);
